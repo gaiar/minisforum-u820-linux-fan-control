@@ -22,8 +22,10 @@ EC hardware timeout has been established. Existing CPU thermal protections do
 not establish adequate cooling for every other component in the enclosure.
 
 The software is provided **“as is,” without warranty of any kind**, under the
-terms of [GPL version 2](LICENSE), including its warranty disclaimer and
-limitation of liability. To the extent permitted by applicable law, the authors
+terms of the [MIT license](LICENSE), with a GPL-2.0-only alternative for the
+kernel source as described in [LICENSING.md](LICENSING.md). Both licenses include
+warranty disclaimers and limitations of liability. To the extent permitted by
+applicable law, the authors
 and contributors disclaim responsibility for losses or damage arising from
 its use. This notice does not override rights that cannot legally be excluded.
 

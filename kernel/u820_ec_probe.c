@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+// SPDX-License-Identifier: GPL-2.0-only OR MIT
 /* CB9 EC telemetry and opt-in bounded boost; see docs/ec_firmware.md. */
 #include <linux/acpi.h>
 #include <linux/device.h>
@@ -517,6 +517,6 @@ static void __exit u820_probe_exit(void)
 
 module_init(u820_probe_init);
 module_exit(u820_probe_exit);
-MODULE_LICENSE("GPL");
+MODULE_LICENSE("Dual MIT/GPL");
 MODULE_DESCRIPTION("Minisforum U820 CB9 EC telemetry and bounded fan boost");
 MODULE_VERSION("0.2.0");

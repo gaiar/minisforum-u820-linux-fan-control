@@ -1,5 +1,13 @@
 # Changelog
 
+## License policy update
+
+- MIT is now the default license for the project. Kernel source and the shared
+  control header are additionally available under GPL-2.0-only, expressed as
+  `GPL-2.0-only OR MIT`, with the `Dual MIT/GPL` module tag.
+- Existing GPL grants in the initial public release remain available. No fan
+  policy or runtime behavior changed. See [LICENSING.md](LICENSING.md).
+
 ## 0.2.0 — Initial public release
 
 - U820 / CB9 EC driver with fan RPM, identity-gated raw duty 46–127, a renewable

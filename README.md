@@ -1,7 +1,7 @@
 # Minisforum U820 Linux Fan Control — Quiet Cooling on Ubuntu
 
 [![CI](https://github.com/gaiar/minisforum-u820-linux-fan-control/actions/workflows/ci.yml/badge.svg)](https://github.com/gaiar/minisforum-u820-linux-fan-control/actions/workflows/ci.yml)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](pyproject.toml)
 
 **Linux fan-speed control and temperature monitoring for the MINISFORUM U820
@@ -172,4 +172,6 @@ records protocol evidence, offsets and hashes, distinguishing observed facts,
 inferences and unknowns. Optional [microphone measurements](docs/configuration.md#relative-noise-measurements)
 stream statistics without saving audio; the daemon itself does not use a microphone.
 
-Licensed under **GPL-2.0-only**. See [LICENSE](LICENSE).
+**MIT is the default license.** The kernel source and shared control header
+are dual-licensed **GPL-2.0-only OR MIT**, retaining the GPL option for Linux
+kernel integration. See [LICENSE](LICENSE) and [licensing details](LICENSING.md).

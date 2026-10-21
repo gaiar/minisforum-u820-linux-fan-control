@@ -7,6 +7,11 @@ successful compilation is not sufficient. Read [DISCLAIMER.md](DISCLAIMER.md).
 
 ## Development environment
 
+The project defaults to MIT. Contributions to the kernel source and shared
+control header must preserve their `GPL-2.0-only OR MIT` dual-license choice;
+other original contributions use MIT unless explicitly documented otherwise.
+Retain third-party notices. See [LICENSING.md](LICENSING.md).
+
 Python 3.10+ and a virtual environment are required. Runtime Python code uses
 the standard library. Install a C compiler, ShellCheck and clangd separately.
 

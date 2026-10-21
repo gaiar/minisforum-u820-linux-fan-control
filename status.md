@@ -19,3 +19,12 @@
 The public repository begins with a reviewed source snapshot. Private research
 logs, host identifiers, firmware binaries and original development history are
 not distributed. See CHANGELOG.md and docs/ for reproducible methods and limits.
+
+## MIT default license
+
+- Adopted MIT as the default for original project code and documentation.
+- Kernel source and shared control header are dual-licensed GPL-2.0-only OR MIT,
+  with the recognized Dual MIT/GPL module tag. GPL text is retained in LICENSES/.
+- Updated README, license scope and risk disclaimer; existing historical GPL
+  grants remain available. No control behavior or hardware settings changed.
+- Local formatting, lint, types, tests, C fault checks and clangd validation pass.
