@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 7 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-and-c:
+    name: Python ${{ matrix.python }} and C checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.12', '3.14']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install build and analysis tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y build-essential shellcheck clangd
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -e '.[dev]'
+      - name: Formatting, lint and types
+        run: |
+          .venv/bin/ruff format --check .
+          .venv/bin/ruff check .
+          .venv/bin/mypy
+      - name: Tests with branch coverage (minimum 90%)
+        run: .venv/bin/pytest
+      - name: Shell and C fault-injection checks
+        run: |
+          shellcheck scripts/*.sh
+          sh scripts/check-control.sh
+      - name: C language-server checks
+        run: |
+          clangd --check=tools/pcm_rms.c
+          clangd --check=tests/control_test.c
+      - name: Validate the shipped profile without hardware
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from u820_fan import load_profile
+          print(load_profile(Path('deploy/u820-fan.json')))
+          PY
+
+  kernel-build:
+    name: DKMS build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            headers: linux-headers-generic-hwe-22.04
+          - os: ubuntu-24.04
+            headers: linux-headers-generic-hwe-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Ubuntu kernel headers and DKMS
+        env:
+          HEADER_PACKAGE: ${{ matrix.headers }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y build-essential dkms "$HEADER_PACKAGE"
+          headers=$(find /usr/src -maxdepth 1 -type d -name 'linux-headers-*-generic' | sort -V | tail -n 1)
+          test -n "$headers"
+          kernel_version=${headers##*/linux-headers-}
+          printf 'KERNEL_VERSION=%s\n' "$kernel_version" >> "$GITHUB_ENV"
+          printf 'Building for Ubuntu kernel %s (compile only)\n' "$kernel_version"
+      - name: Build and install through DKMS without loading the driver
+        run: |
+          sudo install -d /usr/src/u820-ec-0.2.0/kernel
+          sudo install -m 0644 dkms.conf /usr/src/u820-ec-0.2.0/
+          sudo install -m 0644 kernel/Makefile kernel/u820_ec_probe.c kernel/u820_control.h /usr/src/u820-ec-0.2.0/kernel/
+          sudo dkms add -m u820-ec -v 0.2.0
+          sudo dkms build -m u820-ec -v 0.2.0 -k "$KERNEL_VERSION"
+          sudo dkms install -m u820-ec -v 0.2.0 -k "$KERNEL_VERSION"
+          dkms status -m u820-ec -v 0.2.0 -k "$KERNEL_VERSION"
+          modinfo -k "$KERNEL_VERSION" u820_ec_probe
+      - name: Show build log on failure
+        if: failure()
+        run: sudo find /var/lib/dkms/u820-ec -name make.log -exec cat {} \;

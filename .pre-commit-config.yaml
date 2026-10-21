@@ -1,0 +1,35 @@
+repos:
+  - repo: local
+    hooks:
+      - id: format
+        name: Python formatting
+        entry: .venv/bin/ruff format --check .
+        language: system
+        pass_filenames: false
+      - id: lint
+        name: Python lint
+        entry: .venv/bin/ruff check .
+        language: system
+        pass_filenames: false
+      - id: types
+        name: Python types
+        entry: .venv/bin/mypy
+        language: system
+        pass_filenames: false
+      - id: tests
+        name: Tests and coverage
+        entry: .venv/bin/pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: shellcheck
+        name: Shell checks
+        entry: shellcheck scripts/collect-u820.sh scripts/check-firmware.sh scripts/check-control.sh scripts/install-u820.sh scripts/measure-noise.sh
+        language: system
+        pass_filenames: false
+      - id: control-tests
+        name: C control fault-injection tests
+        entry: sh scripts/check-control.sh
+        language: system
+        pass_filenames: false
+        always_run: true

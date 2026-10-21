@@ -1,0 +1,26 @@
+[Unit]
+Description=Quiet temperature-controlled fan for Minisforum U820
+After=systemd-modules-load.service
+ConditionPathExists=/sys/module/u820_ec_probe
+
+[Service]
+Type=simple
+ExecStart=/opt/u820-fan/venv/bin/python /opt/u820-fan/u820_fan.py run --config /etc/u820-fan.json
+Restart=no
+TimeoutStopSec=6
+RuntimeDirectory=u820-fan
+RuntimeDirectoryMode=0755
+UMask=0022
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target
